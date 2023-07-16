@@ -30,7 +30,7 @@ class Produits
     /**
      * Lecture des produits
      *
-     * @return void
+     * @return mixed
      */
     public function lire()
     {
@@ -51,7 +51,7 @@ class Produits
      */
     public function creer()
     {
-        $sql = "INSERT INTO " . $this->table . " SET nom=:nom, prix=:prix, description=:description, categories_id=:categories_id, created_at=:created_at";
+        $sql = "INSERT INTO " . $this->table . " SET nom=:nom, prix=:prix, description=:description, categories_id=:categories_id";
 
         $query = $this->connexion->prepare($sql);
 
@@ -59,13 +59,11 @@ class Produits
         $this->prix = htmlspecialchars(strip_tags($this->prix));
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->categories_id = htmlspecialchars(strip_tags($this->categories_id));
-        $this->created_at = htmlspecialchars(strip_tags($this->created_at));
 
-        $query->bindParam(":nom", $this->nom);
-        $query->bindParam(":prix", $this->prix);
-        $query->bindParam(":description", $this->description);
-        $query->bindParam(":categories_id", $this->categories_id);
-        $query->bindParam(":created_at", $this->created_at);
+        $query->bindParam(":nom", $this->nom, PDO::PARAM_STR);
+        $query->bindParam(":prix", $this->prix, PDO::PARAM_STR);
+        $query->bindParam(":description", $this->description, PDO::PARAM_STR);
+        $query->bindParam(":categories_id", $this->categories_id, PDO::PARAM_INT);
 
         if ($query->execute()) {
             return true;
@@ -85,7 +83,7 @@ class Produits
         FROM " . $this->table . " p LEFT JOIN categories c ON p.categories_id = c.id WHERE p.id = ? LIMIT 0,1";
 
         $query = $this->connexion->prepare($sql);
-        $query->bindParam(1, $this->id);
+        $query->bindParam(1, $this->id, PDO::PARAM_INT);
         $query->execute();
 
         $row = $query->fetch(PDO::FETCH_ASSOC);
@@ -105,12 +103,12 @@ class Produits
      */
     public function supprimer()
     {
-        $sql = "DELETE FROM " . $this->table . " WHERE id = ?";
+        $sql = "DELETE FROM " . $this->table . " WHERE id = :id";
 
         $query = $this->connexion->prepare($sql);
 
         $this->id = htmlspecialchars(strip_tags($this->id));
-        $query->bindParam(1, $this->id);
+        $query->bindParam(":id", $this->id, PDO::PARAM_INT);
 
         if ($query->execute()) {
             return true;
@@ -130,21 +128,43 @@ class Produits
 
         $query = $this->connexion->prepare($sql);
 
+        $this->id = htmlspecialchars(strip_tags($this->id));
         $this->nom = htmlspecialchars(strip_tags($this->nom));
         $this->prix = htmlspecialchars(strip_tags($this->prix));
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->categories_id = htmlspecialchars(strip_tags($this->categories_id));
         $this->id = htmlspecialchars(strip_tags($this->id));
 
-        $query->bindParam(":nom", $this->nom);
-        $query->bindParam(":prix", $this->prix);
-        $query->bindParam(":description", $this->description);
-        $query->bindParam(":categories_id", $this->categories_id);
-        $query->bindParam(":id", $this->id);
+        $query->bindParam(":id", $this->id, PDO::PARAM_INT);
+        $query->bindParam(":nom", $this->nom, PDO::PARAM_STR);
+        $query->bindParam(":prix", $this->prix, PDO::PARAM_STR);
+        $query->bindParam(":description", $this->description, PDO::PARAM_STR);
+        $query->bindParam(":categories_id", $this->categories_id, PDO::PARAM_INT);
 
         if ($query->execute()) {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Vérifier si le produit existe
+     *
+     * @return void
+     */
+    public function selectById()
+    {
+
+        $sql = "SELECT * FROM " . $this->table . " WHERE id = :id";
+        $query = $this->connexion->prepare($sql);
+        $this->id = htmlspecialchars(strip_tags($this->id));
+        $query->bindParam(":id", $this->id, PDO::PARAM_INT);
+        $query->execute();
+
+        if ($query->rowCount() == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

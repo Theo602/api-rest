@@ -10,7 +10,7 @@ class Database
     private $password = "";
     private $connexion;
 
-    // getter pour la connexion
+
     public function getConnexion()
     {
 
@@ -19,10 +19,16 @@ class Database
 
         // On essaie de se connecter
         try {
-            $this->connexion = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
-            $this->connexion->exec("set names utf8"); // On force les transactions en UTF-8
+            $this->connexion = new PDO(
+                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
+                $this->username,
+                $this->password,
+                array(
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+                )
+            );
         } catch (PDOException $exception) {
-            // On gère les erreurs éventuelles
             echo "Erreur de connexion : " . $exception->getMessage();
         }
 
