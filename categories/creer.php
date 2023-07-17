@@ -10,25 +10,23 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     include_once '../config/Database.php';
-    include_once '../models/Produits.php';
+    include_once '../models/Categories.php';
 
     $database = new Database();
     $db = $database->getConnexion();
 
-    $produit = new Produits($db);
+    $categorie = new Categories($db);
 
     $donnees = json_decode(file_get_contents("php://input"));
 
-    if (!empty($donnees->nom) && !empty($donnees->description) && !empty($donnees->prix) && !empty($donnees->categories_id)) {
+    if (!empty($donnees->nom) && !empty($donnees->description)) {
 
-        $produit->nom = $donnees->nom;
-        $produit->description = $donnees->description;
-        $produit->prix = $donnees->prix;
-        $produit->categories_id = $donnees->categories_id;
+        $categorie->nom = $donnees->nom;
+        $categorie->description = $donnees->description;
 
-        if (!$produit->selectByName()) {
+        if (!$categorie->selectByName()) {
 
-            if ($produit->creer()) {
+            if ($categorie->creer()) {
                 http_response_code(201);
                 echo json_encode(["message" => "L'ajout a été effectué"]);
             } else {
@@ -37,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } else {
             http_response_code(503);
-            echo json_encode(["message" => "La référence du produit " . $produit->nom . " existe déjà"]);
+            echo json_encode(["message" => "La référence de la categorie " . $categorie->nom . " existe déjà"]);
         }
     }
 } else {

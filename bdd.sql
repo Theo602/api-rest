@@ -4,7 +4,7 @@ CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `nom` varchar(256) NOT NULL,
   `description` text NOT NULL,
-  `created_at` datetime NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -44,6 +44,8 @@ ALTER TABLE `produits` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREME
 -- Contraintes pour la table `produits`
 --
 ALTER TABLE `produits` ADD CONSTRAINT `produits_ibfk_1` FOREIGN KEY (`categories_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ 
 
 INSERT INTO `categories` (`id`, `nom`, `description`, `created_at`, `updated_at`) VALUES
 (1, 'Mode', 'Catégorie pour tout ce qui est en rapport avec la mode.', '2019-06-01 00:32:07', '2019-08-30 15:34:33'),

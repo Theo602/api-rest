@@ -133,7 +133,6 @@ class Produits
         $this->prix = htmlspecialchars(strip_tags($this->prix));
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->categories_id = htmlspecialchars(strip_tags($this->categories_id));
-        $this->id = htmlspecialchars(strip_tags($this->id));
 
         $query->bindParam(":id", $this->id, PDO::PARAM_INT);
         $query->bindParam(":nom", $this->nom, PDO::PARAM_STR);
@@ -147,6 +146,7 @@ class Produits
         return false;
     }
 
+
     /**
      * Vérifier si le produit existe
      *
@@ -154,7 +154,6 @@ class Produits
      */
     public function selectById()
     {
-
         $sql = "SELECT * FROM " . $this->table . " WHERE id = :id";
         $query = $this->connexion->prepare($sql);
         $this->id = htmlspecialchars(strip_tags($this->id));
@@ -166,5 +165,22 @@ class Produits
         } else {
             return false;
         }
+    }
+
+
+    /**
+     * Vérifier si la reférence du produit existe
+     *
+     * @return void
+     */
+    public function selectByName()
+    {
+        $sql = "SELECT * FROM " . $this->table . " WHERE nom = :nom";
+        $query = $this->connexion->prepare($sql);
+        $this->nom = htmlspecialchars(strip_tags($this->nom));
+        $query->bindParam(":nom", $this->nom, PDO::PARAM_STR);
+        $query->execute();
+
+        return $query->fetch(PDO::FETCH_ASSOC);
     }
 }

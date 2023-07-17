@@ -10,29 +10,27 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
     include_once '../config/Database.php';
-    include_once '../models/Produits.php';
+    include_once '../models/Categories.php';
 
     $database = new Database();
     $db = $database->getConnexion();
 
-    $produit = new Produits($db);
+    $categorie = new Categories($db);
 
     $donnees = json_decode(file_get_contents("php://input"));
 
 
-    if (!empty($donnees->id) && !empty($donnees->nom) && !empty($donnees->description) && !empty($donnees->prix) && !empty($donnees->categories_id)) {
+    if (!empty($donnees->id) && !empty($donnees->nom) && !empty($donnees->description)) {
 
-        $produit->id = $donnees->id;
-        $produit->nom = $donnees->nom;
-        $produit->description = $donnees->description;
-        $produit->prix = $donnees->prix;
-        $produit->categories_id = $donnees->categories_id;
+        $categorie->id = $donnees->id;
+        $categorie->nom = $donnees->nom;
+        $categorie->description = $donnees->description;
 
-        if ($produit->selectById()) {
+        if ($categorie->selectById()) {
 
-            if (!$produit->selectByName()) {
+            if (!$categorie->selectByName()) {
 
-                if ($produit->modifier()) {
+                if ($categorie->modifier()) {
                     http_response_code(201);
                     echo json_encode(["message" => "La modification a été effectuée"]);
                 } else {
@@ -41,11 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
                 }
             } else {
                 http_response_code(503);
-                echo json_encode(["message" => "La référence du produit " . $produit->nom . " existe déjà"]);
+                echo json_encode(["message" => "La référence de la catégorie " . $categorie->nom . " existe déjà"]);
             }
         } else {
             http_response_code(404);
-            echo json_encode(["message" => "Le produit n'existe pas"]);
+            echo json_encode(["message" => "La categorie n'existe pas"]);
         }
     }
 } else {
